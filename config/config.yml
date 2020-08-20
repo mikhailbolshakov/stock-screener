@@ -1,4 +1,6 @@
 first:
-  attr1: val1
+  attr1: "val1"
 second:
-  attr2: val2
+  attr2: "val2"
+third:
+  attr3: "val3"
