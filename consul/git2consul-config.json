@@ -4,7 +4,7 @@
     {
       "name": "config",
       "expand_keys" : true,
-      "url": "git@github.com:mikhailbolshakov/stock-screener.git",
+      "url": "https://github.com/mikhailbolshakov/stock-screener.git",
       "source_root": "config",
       "mountpoint": "",
       "branches": [
