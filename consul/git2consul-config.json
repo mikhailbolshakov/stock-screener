@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "logger" : {
+    "name" : "git2consul",
+    "streams" : [{
+      "level": "trace",
+      "stream": "process.stdout"
+    },
+      {
+        "level": "debug",
+        "type": "rotating-file",
+        "path": "/var/log/git2consul/git2consul.log"
+      }]
+  },
+  "repos": [
+    {
+      "name": "config",
+      "url": "git@github.com:mikhailbolshakov/stock-screener.git",
+      "source_root": "config",
+      "mountpoint": "",
+      "branches": [
+        "master"
+      ],
+      "include_branch_name": false,
+      "hooks": [
+        {
+          "type": "polling",
+          "interval": "1"
+        }
+      ]
+    }
+  ]
+}

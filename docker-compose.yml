@@ -4,3 +4,11 @@ consul:
     - "8400:8400"
     - "8500:8500"
     - "8600:8600"
+#git2consul:
+#  image: sroskelley/docker-git2consul
+#  environment:
+#    ID: ${ID}
+#    IDPUB: ${IDPUB}
+#    CFG: ${CFG}
+#    CONSUL_ENDPOINT: localhost
+#    CONSUL_PORT: 8500
