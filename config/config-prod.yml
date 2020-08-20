@@ -1,6 +1,4 @@
-first:
-  attr1: "val1"
-second:
-  attr2: "val2"
-third:
-  attr3: "val3"
+storage:
+  posgre:
+    connection:
+      host: host-prod

@@ -6,7 +6,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 @RefreshScope
 @Configuration
-@ConfigurationProperties("db")
+@ConfigurationProperties("config.config-dev.yml.")
 public class DatabaseProperties {
 
     private String connection;

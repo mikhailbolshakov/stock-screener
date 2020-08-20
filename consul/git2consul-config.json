@@ -1,10 +1,11 @@
 {
   "version": "1.0",
+  "local_store": "/var/lib/git2consul_cache",
   "repos": [
     {
       "name": "config",
       "expand_keys" : true,
-      "url": "https://github.com/mikhailbolshakov/stock-screener.git",
+      "url": "git@github.com:mikhailbolshakov/stock-screener.git",
       "source_root": "config",
       "mountpoint": "",
       "branches": [

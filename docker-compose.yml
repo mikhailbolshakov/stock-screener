@@ -1,9 +1,21 @@
-consul:
-  image: consul
-  ports:
-    - "8400:8400"
-    - "8500:8500"
-    - "8600:8600"
-git2consul:
-  image: sroskelley/docker-git2consul
-  env_file: ./.env
+version: '3.4'
+
+services:
+  consul:
+    container_name: consul
+    image: consul
+    network_mode: host
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600"
+  git2consul:
+    container_name: git2consul
+    image: sroskelley/docker-git2consul
+    network_mode: host
+    environment:
+      ID: ${ID}
+      IDPUB: ${IDPUB}
+      CFG: ${CFG}
+      CONSUL_ENDPOINT: ${CONSUL_ENDPOINT}
+      CONSUL_PORT: ${CONSUL_PORT}

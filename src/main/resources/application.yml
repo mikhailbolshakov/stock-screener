@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: stock-screener
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+environment:
+  type: ${ENV_TYPE}
