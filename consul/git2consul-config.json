@@ -8,7 +8,7 @@
       "ignore_file_extension" : true,
       "url": "git@github.com:mikhailbolshakov/stock-screener.git",
       "source_root": "config",
-      "mountpoint": "",
+      "mountpoint": "stock-screener",
       "branches": [
         "master"
       ],

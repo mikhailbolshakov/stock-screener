@@ -1,4 +1,3 @@
 storage:
-  posgre:
-    connection:
-      host: host-prod
+  connection:
+    host: host-prod
