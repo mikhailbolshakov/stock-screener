@@ -5,6 +5,9 @@ spring:
     consul:
       host: localhost
       port: 8500
+      enabled: true
       config:
         enabled: true
-        format: YAML
+        format: FILES
+    bus:
+      enabled: false

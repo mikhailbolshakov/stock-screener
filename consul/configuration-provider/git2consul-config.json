@@ -7,8 +7,7 @@
       "expand_keys" : true,
       "ignore_file_extension" : true,
       "url": "git@github.com:mikhailbolshakov/stock-screener.git",
-      "source_root": "config",
-      "mountpoint": "stock-screener",
+      "source_root": "config/stock-screener",
       "branches": [
         "master"
       ],
@@ -16,7 +15,7 @@
       "hooks": [
         {
           "type": "polling",
-          "interval": "1"
+          "interval": 1
         }
       ]
     }

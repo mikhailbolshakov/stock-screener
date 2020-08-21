@@ -5,7 +5,12 @@ spring:
     consul:
       host: localhost
       port: 8500
+      enabled: true
       config:
         enabled: true
-environment:
-  type: ${ENV_TYPE}
+        format: FILES
+    bus:
+      enabled: false
+storage:
+  connection:
+    host: host-prod
