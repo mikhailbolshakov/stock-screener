@@ -1,0 +1,37 @@
+version: '3.1'
+services:
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - local
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - local
+    environment:
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9092    
+      KAFKA_BROKER_ID: 1
+    volumes:
+      - ./:/etc/kafka
+
+  -kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    networks:
+      - local
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+
+networks:
+  local:
+    external: true
