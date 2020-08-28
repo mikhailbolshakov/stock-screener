@@ -5,9 +5,9 @@ spring:
     consul:
       host: localhost
       port: 8500
-      enabled: true
+      enabled: false
       config:
-        enabled: true
+        enabled: false
         format: FILES
     bus:
       enabled: false

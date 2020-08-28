@@ -1,28 +1,141 @@
-plugins {
-	id 'org.springframework.boot' version '2.3.3.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-	id 'java'
-	id "io.freefair.lombok" version "5.1.1"
-}
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerRemoveImage
 
-group = 'com.mikhailb'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+buildscript {
 
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter-consul-all:2.2.4.RELEASE'
-	implementation 'org.springframework.cloud:spring-cloud-starter-consul-config:2.2.4.RELEASE'
-
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	repositories {
+		mavenCentral()
 	}
+
+	ext {
+		springBootVersion = '2.3.3.RELEASE'
+		springCloudVersion = 'Hoxton.SR7'
+		springDependencyManagementVersion = '1.0.10.RELEASE'
+		lombokVersion = '5.1.1'
+		flywayVersion = '6.5.5'
+	}
+
+	dependencies {
+		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "org.postgresql:postgresql:42.1.4"
+		classpath 'com.bmuschko:gradle-docker-plugin:6.6.1'
+	}
+
 }
 
-test {
-	useJUnitPlatform()
+plugins {
+	id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+	id 'java'
+	id 'io.freefair.lombok' version "${lombokVersion}"
+	id 'org.flywaydb.flyway' version "${flywayVersion}"
+	id 'com.bmuschko.docker-remote-api' version '6.6.1'
 }
+
+allprojects {
+
+	group = 'com.mikhailb.stock-screener'
+	version = '0.0.1-SNAPSHOT'
+
+	repositories {
+		mavenCentral()
+	}
+
+	def dockerBuildDir = 'build/docker/'
+	def imageVersion = '1.0'
+	def uniqueContainerName = "stock-screener.${project.name}"
+
+	task stopContainer(type: DockerStopContainer) {
+		targetContainerId("$uniqueContainerName")
+		onError { exc ->
+			if (exc.message!=null && !exc.message.contains('NotModifiedException')) {
+				throw new RuntimeException(exc)
+			}
+		}
+	}
+
+	task removeContainer(type: DockerRemoveContainer) {
+		dependsOn stopContainer
+		targetContainerId("$uniqueContainerName")
+		onError { exc ->
+			if (exc.message!=null && !exc.message.contains('NotModifiedException')) {
+				throw new RuntimeException(exc)
+			}
+		}
+	}
+
+	task removeImage(type: DockerRemoveImage) {
+		dependsOn removeContainer
+		targetImageId("mikhailb/stock-screener/${project.name}:$imageVersion")
+		onError { exc ->
+			if (exc.message!=null && !exc.message.contains('NotModifiedException')) {
+				throw new RuntimeException(exc)
+			}
+		}
+	}
+
+	task syncJar(type: Copy) {
+		dependsOn assemble
+		from "${buildDir}/libs"
+		into dockerBuildDir
+	}
+
+	task syncDockerfile(type: Copy) {
+		from 'Dockerfile'
+		into dockerBuildDir
+	}
+
+	task buildImage(type: DockerBuildImage) {
+		dependsOn syncJar, syncDockerfile
+		inputDir = project.file(dockerBuildDir)
+		images = ["mikhailb/stock-screener/${project.name}:$imageVersion"]
+	}
+
+	task createContainer(type: DockerCreateContainer) {
+		dependsOn buildImage
+		targetImageId buildImage.getImageId()
+		containerName = "$uniqueContainerName"
+		hostConfig.portBindings = ['8080:8080']
+		hostConfig.autoRemove = true
+	}
+
+	task startContainer(type: DockerStartContainer) {
+		dependsOn createContainer
+		targetContainerId("$uniqueContainerName")
+	}
+
+}
+
+subprojects {
+
+	apply plugin: 'idea'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'io.freefair.lombok'
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+	}
+
+	buildscript {
+
+		repositories {
+			mavenCentral()
+		}
+		dependencyManagement {
+			imports {
+				mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+				mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+			}
+		}
+	}
+
+}
+
+
